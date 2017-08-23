@@ -3,7 +3,7 @@
 // ==UserScript==
 // @name          PaperGather
 // @namespace     https://github.com/kingems/PaperGather
-// @version       0.1.2
+// @version       0.1.3
 // @author        kingem(kingem@126.com)
 // @description   百度贴吧,天涯论坛,豆瓣小组等的贴子脱水工具
 // @grant         GM_addStyle
@@ -71,7 +71,7 @@ Rule.specialSite = [
             var info = bot;
             var re = new Object;
             re["poster"] = info.find('li.d_name').text(); //作者
-            var ptail = info.find('span.tail-info').text().split('楼');
+            var ptail = info.find('span.tail-info').text().match(/\d+楼.*/)[0].split('楼');
             re["id"] = ptail[0]; //楼层
             re["time"] = ptail[1]; //时间
             re["content"] = info.find('div.d_post_content').html().
