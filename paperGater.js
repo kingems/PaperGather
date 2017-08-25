@@ -3,7 +3,7 @@
 // ==UserScript==
 // @name          PaperGather
 // @namespace     https://github.com/kingems/PaperGather
-// @version       0.1.3
+// @version       0.1.5
 // @author        kingem(kingem@126.com)
 // @description   百度贴吧,天涯论坛,豆瓣小组等的贴子脱水工具
 // @grant         GM_addStyle
@@ -48,7 +48,7 @@ Rule.specialSite = [
         },
         //获取标题
         get_topic_name:function(){
-            return $('h3').text();
+            return $('title').text();
         },
         //获得第1页网址
         format_thread_url_1st:function(url,islz){
@@ -71,9 +71,13 @@ Rule.specialSite = [
             var info = bot;
             var re = new Object;
             re["poster"] = info.find('li.d_name').text(); //作者
-            var ptail = info.find('span.tail-info').text().match(/\d+楼.*/)[0].split('楼');
-            re["id"] = ptail[0]; //楼层
-            re["time"] = ptail[1]; //时间
+            var ptail = info.attr('data-field');
+            re["id"] = ptail.match(/"post_no":(.*?),/)[1]; //楼层
+            if (ptail.match(/"date":"(.*?)"/)){
+                re["time"] = ptail.match(/"date":"(.*?)"/)[1];//时间                
+            }else{
+                re["time"] =info.find('span.tail-info').text().split('楼')[1];//时间
+            }
             re["content"] = info.find('div.d_post_content').html().
                 replace(/<\/?font[^>]*>/g, '');  //内容
             re["word_num"] = re["content"].replace('<[^>]+>','').length; // 字数
