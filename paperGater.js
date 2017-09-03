@@ -1,11 +1,11 @@
 // --------------------------------------------------------------------
 //
 // ==UserScript==
-// @name          PaperGather
+// @name          贴子脱水工具
 // @namespace     https://github.com/kingems/PaperGather
-// @version       0.1.5
+// @version       0.1.7
 // @author        kingem(kingem@126.com)
-// @description   百度贴吧,天涯论坛,豆瓣小组等的贴子脱水工具
+// @description   百度贴吧,天涯论坛,豆瓣小组等的贴子脱水工具(浏览的文章版权归原作者所有)
 // @grant         GM_addStyle
 // @require       https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js
 // @include       *://tieba.baidu.com/p/*
@@ -70,8 +70,11 @@ Rule.specialSite = [
         extract_floor_info:function(bot,index) {
             var info = bot;
             var re = new Object;
+            var ptail = info.attr('data-field');            
+            if (!ptail) {
+                return null;
+            };
             re["poster"] = info.find('li.d_name').text(); //作者
-            var ptail = info.attr('data-field');
             re["id"] = ptail.match(/"post_no":(.*?),/)[1]; //楼层
             if (ptail.match(/"date":"(.*?)"/)){
                 re["time"] = ptail.match(/"date":"(.*?)"/)[1];//时间                
@@ -516,6 +519,7 @@ function get_page_floors(u,num) {
             for (var i = 0; i<s.length;i++){
                 var bot = $(s[i]);
                 var f_i = site.extract_floor_info(bot,snum+(i+1).toString());
+                if (!f_i) continue;
                 floors_info.push(f_i);
             }
 
